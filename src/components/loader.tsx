@@ -1,46 +1,37 @@
 import { Colors } from 'src/domain/colors'
 import styled, { keyframes } from 'styled-components'
 
-type Props = {
-  visible: boolean
-}
-
-export function Loader(props: Props) {
-  const { visible } = props
-
+export function Loader() {
   return (
-    <Wrap $visible={visible}>
-      <Slider />
+    <Wrap>
+      <Spinner />
     </Wrap>
   )
 }
 
-const SLIDER_WIDTH = 0.5 // 30%
-
-const Wrap = styled.div<{ $visible: boolean }>`
+const Wrap = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
   z-index: 1;
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
-  height: 0.5rem;
-  background: ${Colors.dark_blue};
-  overflow: hidden;
-  visibility: ${({ $visible }) => ($visible ? 'visible' : 'hidden')};
+  height: 100%;
 `
 
-const slide = keyframes`
-	from {
-		transform: translateX(-100%);
-	}
-	to {
-		transform: translateX(calc(100% * (${1 / SLIDER_WIDTH})));
-	}
+const spin = keyframes`
+	to { -webkit-transform: rotate(360deg); }
 `
 
-const Slider = styled.div`
-  width: calc(100% * ${SLIDER_WIDTH});
-  height: 8px;
-  background: linear-gradient(90deg, transparent 0%, ${Colors.mid_blue} 50%, transparent 100%);
-  animation: ${slide} linear 2000ms infinite;
+const Spinner = styled.div`
+  display: inline-block;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  border: 4px solid ${Colors.white_25_perc};
+  border-top-color: ${Colors.white};
+  animation: ${spin} 2s linear infinite;
+  -webkit-animation: ${spin} 2s linear infinite;
 `

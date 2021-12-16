@@ -19,7 +19,7 @@ export function App() {
           <UserList selectedUser={user} onSelectedUserChange={setUser} />
         </ListPane>
         <DetailPane>
-          <UserDetail />
+          <UserDetail user={user} />
         </DetailPane>
       </AppContainer>
     </QueryClientProvider>
@@ -28,12 +28,12 @@ export function App() {
 
 const AppContainer = styled(Row)`
   width: 100%;
-  height: 100vh;
+  min-height: 100vh;
   background: ${Colors.app_background};
   color: whitesmoke;
 `
 const ListPane = styled(Col)`
-  width: 25rem;
+  min-width: 25rem;
 `
 const DetailPane = styled(Col)`
   flex-grow: 1;

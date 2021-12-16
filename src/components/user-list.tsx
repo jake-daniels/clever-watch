@@ -48,39 +48,38 @@ export function UserList(props: Props) {
   }
 
   const isEmpty = users.length === 0
+  const showLoader = query.isLoading
   const showError = !query.isLoading && query.error
   const showNoResults = !query.isLoading && isEmpty
 
   return (
     <Wrap>
-      <Loader visible={query.isLoading} />
-      <Col>
-        <InputWrap>
-          <SearchInput
-            placeholder={'Search...'}
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-          <SearchIcon />
-        </InputWrap>
-        {showError && <InfoBox>Failed to load users.</InfoBox>}
-        {showNoResults && <InfoBox>No results found. Try different search.</InfoBox>}
-        {users.map((user) => (
-          <UserBox
-            key={user.id}
-            onClick={() => toggleUser(user)}
-            className={isSelectedUser(user) ? 'selected' : ''}
-          >
-            <Row $align={'center'} $gap={'1rem'}>
-              <Avatar src={user.photo} />
-              <Col $gap={'0.5rem'}>
-                <Username>{user.username}</Username>
-                <Name>{user.name}</Name>
-              </Col>
-            </Row>
-          </UserBox>
-        ))}
-      </Col>
+      <InputWrap>
+        <SearchInput
+          placeholder={'Search...'}
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+        <SearchIcon />
+      </InputWrap>
+      {showLoader && <Loader />}
+      {showError && <InfoBox>Failed to load users.</InfoBox>}
+      {showNoResults && <InfoBox>No results found. Try different search.</InfoBox>}
+      {users.map((user) => (
+        <UserBox
+          key={user.id}
+          onClick={() => toggleUser(user)}
+          className={isSelectedUser(user) ? 'selected' : ''}
+        >
+          <Row $align={'center'} $gap={'1rem'}>
+            <Avatar src={user.photo} />
+            <Col $gap={'0.5rem'}>
+              <Username>{user.username}</Username>
+              <Name>{user.name}</Name>
+            </Col>
+          </Row>
+        </UserBox>
+      ))}
     </Wrap>
   )
 }
@@ -91,12 +90,12 @@ const Wrap = styled(Col)`
 `
 const InputWrap = styled.div`
   position: relative;
-  padding: 1rem;
+  padding: 2rem;
 `
 const SearchIcon = styled(FaSearch)`
   position: absolute;
-  top: 1.75rem;
-  right: 1.75rem;
+  top: 2.75rem;
+  right: 2.75rem;
   color: ${Colors.white_50_perc};
 `
 const SearchInput = styled.input`
@@ -131,7 +130,7 @@ const UserHighlight = css`
 `
 const UserBox = styled(Col)`
   cursor: pointer;
-  padding: 1rem;
+  padding: 1rem 2rem;
   color: ${Colors.mid_grey};
   transition: padding ease-in-out 250ms;
   &:hover,
@@ -139,7 +138,7 @@ const UserBox = styled(Col)`
     ${UserHighlight};
   }
   &.selected {
-    padding-left: 2rem;
+    padding-left: 4rem;
   }
 `
 const Username = styled.span``
