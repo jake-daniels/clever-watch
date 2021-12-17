@@ -1,21 +1,21 @@
 import { useMemo, useState } from 'react'
+import { FaSearch } from 'react-icons/fa'
 import { useQuery } from 'react-query'
 import { getUsers } from 'src/domain/api'
 import { Colors } from 'src/domain/colors'
 import { User } from 'src/domain/types'
-import { matchSubstring } from 'src/domain/utils'
-import styled, { css } from 'styled-components'
-import { Col, Row } from './flexbox'
+import styled from 'styled-components'
+import { Col } from './flexbox'
 import { Loader } from './loader'
-import { FaSearch } from 'react-icons/fa'
+import { UserListItem } from './user-list-item'
 
 interface Props {
   selectedUser?: User
-  onSelectedUserChange: (selectedUser?: User) => void
+  onUserSelect: (selectedUser?: User) => void
 }
 
 export function UserList(props: Props) {
-  const { selectedUser, onSelectedUserChange } = props
+  const { selectedUser, onUserSelect } = props
 
   const [search, setSearch] = useState<string>('')
 
@@ -27,10 +27,7 @@ export function UserList(props: Props) {
       return allUsers
     } else {
       return allUsers.filter(
-        (user) =>
-          matchSubstring(user.username, search) ||
-          matchSubstring(user.name, search) ||
-          matchSubstring(user.email, search),
+        (user) => matchSubstring(user.username, search) || matchSubstring(user.name, search),
       )
     }
   }, [query.data, search])
@@ -41,9 +38,9 @@ export function UserList(props: Props) {
 
   const toggleUser = (user: User) => {
     if (isSelectedUser(user)) {
-      onSelectedUserChange(undefined)
+      onUserSelect(undefined)
     } else {
-      onSelectedUserChange(user)
+      onUserSelect(user)
     }
   }
 
@@ -65,23 +62,22 @@ export function UserList(props: Props) {
       {showLoader && <Loader />}
       {showError && <InfoBox>Failed to load users.</InfoBox>}
       {showNoResults && <InfoBox>No results found. Try different search.</InfoBox>}
-      {users.map((user) => (
-        <UserBox
-          key={user.id}
-          onClick={() => toggleUser(user)}
-          className={isSelectedUser(user) ? 'selected' : ''}
-        >
-          <Row $align={'center'} $gap={'1rem'}>
-            <Avatar src={user.photo} />
-            <Col $gap={'0.5rem'}>
-              <Username>{user.username}</Username>
-              <Name>{user.name}</Name>
-            </Col>
-          </Row>
-        </UserBox>
-      ))}
+      <UsersContainer>
+        {users.map((user) => (
+          <UserListItem
+            key={user.id}
+            user={user}
+            isSelected={isSelectedUser(user)}
+            onClick={() => toggleUser(user)}
+          />
+        ))}
+      </UsersContainer>
     </Wrap>
   )
+}
+
+function matchSubstring(target: string, substring: string) {
+  return target.toLocaleLowerCase().includes(substring.toLocaleLowerCase())
 }
 
 const Wrap = styled(Col)`
@@ -115,36 +111,21 @@ const SearchInput = styled.input`
     border-color: ${Colors.white};
   }
 `
-const Avatar = styled.img`
-  width: 3rem;
-  height: 3rem;
-  border-radius: 50%;
-  object-fit: cover;
-`
-const UserHighlight = css`
-  background: ${Colors.white_12_perc};
-  color: ${Colors.white};
-  ${Avatar} {
-    border: 2px solid white;
+const UsersContainer = styled(Col)`
+  height: calc(100vh - 6.5rem);
+  overflow: auto;
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
   }
-`
-const UserBox = styled(Col)`
-  cursor: pointer;
-  padding: 1rem 2rem;
-  color: ${Colors.mid_grey};
-  transition: padding ease-in-out 250ms;
-  &:hover,
-  &.selected {
-    ${UserHighlight};
+  ::-webkit-scrollbar-track {
+    border-radius: 6px;
+    background-color: ${Colors.white_25_perc};
   }
-  &.selected {
-    padding-left: 4rem;
+  ::-webkit-scrollbar-thumb {
+    border-radius: 6px;
+    background-color: ${Colors.white_50_perc};
   }
-`
-const Username = styled.span``
-const Name = styled.span`
-  font-size: 12px;
-  opacity: 0.5;
 `
 const InfoBox = styled.p`
   margin: 0;
